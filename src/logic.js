@@ -47,7 +47,6 @@ function move(gameState) {
     }
 }
 
-
     // Step 0: Don't let your Battlesnake move back on its own neck
     const myHead = gameState.you.head
     const myNeck = gameState.you.body[1]
@@ -86,57 +85,21 @@ function move(gameState) {
       checkCollision(myHead, checkBody);
     }
 
-
-//avoid food
-
-const food = gameState.board.food;
-
-if (gameState.you.health > 25) {
-  food.forEach((f) => {
-    checkCollision(myHead, f);
-  })
-}
-
-
     // TODO: Step 3 - Don't collide with others.
     // Use information in gameState to prevent your Battlesnake from colliding with others.
     
     const otherSnakes = gameState.board.snakes;
     const myID = gameState.you.id;
     for (let i = 0; i < otherSnakes.length; i++) {
+      // Review to see if I remove this if statement, does it check for myself as well (i.e. remove step 2)
       if (otherSnakes[i].id != myID) {        
         for (let j = 0; j < otherSnakes[i].body.length; j++) {
-            // Need to avoid other snake's heads in case of collision
+            // Need to avoid other snake's heads / next move in case of collision
           // if (j == 0) {
           //   [myHead.x, myHead.y]
-          //   let gameState.you.head.x
-          //   [x+1, y]
-          //   x-1 y
-          //   x y+1
-          //   x y-1
-          // }
-
-
 
           let otherBody = otherSnakes[i].body[j];
-          if (myHead.y == otherBody.y) {
-            if (myHead.x == otherBody.x - 1) {
-              possibleMoves.right = false;
-            } else if (myHead.x == otherBody.x + 1) {
-              possibleMoves.left = false;
-            }
-          }
-
-          if (myHead.x == otherBody.x) {
-            if (myHead.y == otherBody.y - 1) {
-              possibleMoves.up = false;
-            } else if (myHead.y == otherBody.y + 1) {
-              possibleMoves.down = false;
-            }
-          }
-
-
-
+          checkCollision(myHead, otherBody);
         }
       }
     }
@@ -144,6 +107,15 @@ if (gameState.you.health > 25) {
     // TODO: Step 4 - Find food.
     // Use information in gameState to seek out and find food.
 
+// Avoid adjacent food below 25 health
+//Object.values(possibleMoves).filter(Boolean)
+const food = gameState.board.food;
+
+if (gameState.you.health > 25) {
+  food.forEach((f) => {
+    checkCollision(myHead, f);
+  })
+}
     // Finally, choose a move from the available safe moves.
     // TODO: Step 5 - Select a move to make based on strategy, rather than random.
     const safeMoves = Object.keys(possibleMoves).filter(key => possibleMoves[key])
