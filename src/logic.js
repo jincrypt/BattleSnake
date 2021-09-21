@@ -26,9 +26,25 @@ function move(gameState) {
         right: true
     }
 
-  // function
-  function checkBody(self, other) {
-  
+  // Helper function
+  function checkCollision(self, other) {
+    if (self.x === other.x) {
+      if (self.y === other.y - 1) {
+        possibleMoves.up = false;
+      }
+      if (self.y === other.y + 1) {
+        possibleMoves.down = false;
+      }
+    }
+
+    if (self.y === other.y) {
+      if (self.x === other.x - 1) {
+        possibleMoves.right = false;
+      }
+      if (self.x === other.x + 1) {
+        possibleMoves.left = false;
+      }
+    }
 }
 
 
@@ -67,21 +83,7 @@ function move(gameState) {
     // Head = 0, Neck = 1, start at 2
     for (let i = 2; i < gameState.you.length; i++) {
       let checkBody = gameState.you.body[i];
-      if (myHead.y === checkBody.y) {
-        if (myHead.x === checkBody.x - 1) {
-          possibleMoves.right = false;
-        } else if (myHead.x === checkBody.x + 1) {
-          possibleMoves.left = false;
-        }
-      }
-
-      if (myHead.x === checkBody.x) {
-        if (myHead.y === checkBody.y + 1) {
-          possibleMoves.down = false;
-        } else if (myHead.y === checkBody.y - 1) {
-          possibleMoves.up = false;
-        }
-      }
+      checkCollision(myHead, checkBody);
     }
 
 
@@ -89,8 +91,10 @@ function move(gameState) {
 
 const food = gameState.board.food;
 
-if (gameState.you.health < 25) {
-  food.filter()
+if (gameState.you.health > 25) {
+  food.forEach((f) => {
+    checkCollision(myHead, f);
+  })
 }
 
 
